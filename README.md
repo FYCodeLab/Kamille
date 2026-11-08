@@ -6,6 +6,7 @@ Live site: https://fycodelab.github.io/Kamille/ (currently v3 — index.html is 
 Kamille Code LED — crée un programme CircuitPython pour une matrice NeoPixel 16x16 avec OpenRouter. La clé OpenRouter est entrée dans la page, jamais enregistrée ni publiée.
 
 Versions (kept, never replaced):
+- v7: https://fycodelab.github.io/Kamille/kamillev7.html — Config panel is now a drawer floating over the wiring diagram (no reflow)
 - v6: https://fycodelab.github.io/Kamille/kamillev6.html — wiring diagram (assets/esp.png) under the prompt box
 - v5: https://fycodelab.github.io/Kamille/kamillev5.html — 6 models (Mistral Small 3.2, Codestral 2508, Qwen3 Coder Flash, GPT-4.1 mini ⭐, Claude Haiku 4.5, Claude Sonnet 4.5), reworked cost estimate
 - v4: https://fycodelab.github.io/Kamille/kamillev4.html — ESP32-C3 SuperMini, GPIO7, test IA
