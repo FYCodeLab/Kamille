@@ -6,6 +6,7 @@ Live site: https://fycodelab.github.io/Kamille/ (currently v3 — index.html is 
 Kamille Code LED — crée un programme CircuitPython pour une matrice NeoPixel 16x16 avec OpenRouter. La clé OpenRouter est entrée dans la page, jamais enregistrée ni publiée.
 
 Versions (kept, never replaced):
+- v9: https://fycodelab.github.io/Kamille/kamillev9.html — reworked system prompt: "Simplification intelligente" (preserve essential actions, use A/B/P when needed, map extra actions to presses/combos), game keywords in complexity detection, extra-rules input removed
 - v8: https://fycodelab.github.io/Kamille/kamillev8.html — Config drawer now fixed off-canvas from the left edge; system prompt: fixed hardware + optional A/B/P controls only when relevant
 - v7: https://fycodelab.github.io/Kamille/kamillev7.html — Config panel is now a drawer floating over the wiring diagram (no reflow)
 - v6: https://fycodelab.github.io/Kamille/kamillev6.html — wiring diagram (assets/esp.png) under the prompt box

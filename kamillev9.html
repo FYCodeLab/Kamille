@@ -1,0 +1,182 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kamille Code LED v9 — ESP32-C3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"><style>
+:root{font-family:Fredoka,system-ui,sans-serif;color:#18275e;background:#4b67e8}*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 0 100%,#a98bff 0,transparent 35%),linear-gradient(130deg,#316de7,#6864e8 65%,#ad73eb)}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}.shell{height:100dvh;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px;max-width:1700px;margin:auto;padding:14px 18px}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;color:white}.brand{font-size:clamp(23px,3.5vw,48px);font-weight:700;letter-spacing:-1.5px;text-shadow:0 4px #2835a5}.brand b{color:#ffdb50}.tag{font-size:13px;font-weight:600;color:#eaf4ff}.pill{border:2px solid #b2f0ff;background:#e6fff5;color:#11643e;border-radius:50px;padding:10px 16px;font-weight:700;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(290px,.82fr) minmax(400px,1.35fr);gap:14px;min-height:0}.left{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px;min-height:0}.small[hidden]{display:none!important}.config-btn{border:2px solid #b2f0ff;background:#fff6d5;color:#28346d;border-radius:50px;padding:10px 16px;font-weight:700;white-space:nowrap}.header-actions{display:flex;align-items:center;gap:8px}.card{border:3px solid #a9e9ff;background:linear-gradient(#e2f8ff,#bce9ff);border-radius:26px;padding:16px;box-shadow:0 6px 0 #3848c49c;min-height:0}.card h2{margin:0 0 12px;font-size:clamp(19px,2vw,27px)}.prompt-card{display:flex;flex-direction:column;gap:9px}.prompt-card textarea{flex:1;min-height:75px;width:100%;border:2px solid #a4a3ff;border-radius:17px;background:white;color:#14245a;padding:15px;resize:none;font-size:clamp(15px,1.4vw,20px);outline:none}.prompt-card textarea:focus{border-color:#7e45e8}.generate{border:0;border-radius:20px;padding:12px;background:linear-gradient(#bf55ff,#6b1de1);color:white;font-size:clamp(17px,1.8vw,24px);font-weight:700;box-shadow:0 5px 0 #4820a6}.small{background:#ffffffeb;border-color:#d8d5ff;padding:11px 14px;max-height:43dvh;overflow:auto}.small h2{font-size:18px;margin-bottom:7px}.settings{display:grid;grid-template-columns:1fr 1fr;gap:7px}.settings label{font-size:12px;font-weight:600}.settings input,.settings select,.settings textarea{display:block;width:100%;border:1px solid #a6b2d9;border-radius:9px;padding:7px;background:white;color:#17245a;font-size:13px}.settings .wide{grid-column:1/-1}.montage-card{padding:10px;overflow:hidden;position:relative;isolation:isolate}.montage-card img{display:block;width:100%;height:auto;border-radius:14px}.code-card{background:#fff6d5;border-color:#ffe6a1;display:flex;flex-direction:column;gap:9px}.code-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.code-head h2{margin:0}.tools{display:flex;gap:6px}.tools button{border:1px solid #dfd3a9;background:white;border-radius:10px;padding:7px 10px;color:#23386c;font-weight:600}.editor{position:relative;flex:1;min-height:0;border-radius:16px;overflow:hidden;background:#111d3b;border:2px solid #354775}.editor pre,.editor textarea{position:absolute;inset:0;margin:0;padding:16px 18px;width:100%;height:100%;font:clamp(12px,1.1vw,16px)/1.55 'JetBrains Mono',monospace;white-space:pre;overflow:auto;tab-size:4;letter-spacing:0;overflow-wrap:normal}.editor pre{pointer-events:none;color:#e7efff;z-index:1}.editor textarea{z-index:2;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:white;border:0;resize:none;outline:none}.editor textarea::selection{background:#587bcd80}.kw{color:#ff77d4;font-weight:600}.str{color:#ffce74}.num{color:#56d8ff}.comment{color:#83ec7c}.fn{color:#d3a0ff}.footer{display:flex;align-items:center;justify-content:space-between;gap:12px}.usage{font-size:12px;font-weight:600;color:#20325c;background:#e8f8ff;border:2px solid #c1eaff;border-radius:12px;padding:7px 11px;white-space:nowrap}.status{background:#fffdf3;border-radius:15px;padding:10px 14px;flex:1;font-size:13px;min-width:0}.send{border:0;border-radius:23px;background:linear-gradient(#54f946,#03a62f);color:white;padding:14px 24px;font-weight:700;font-size:clamp(16px,2vw,27px);box-shadow:0 6px 0 #047a29;text-shadow:0 2px #19772a}.send:disabled{opacity:1;filter:grayscale(.7);cursor:not-allowed}.note{font-size:11px;color:#33426c;margin:0}.chip{background:#e5edff;border-radius:9px;padding:4px 7px;font-size:11px}.error{color:#a81934}.success{color:#12652f}@media(max-width:820px){.shell{height:100dvh;min-height:440px;padding:8px;gap:7px}.layout{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:7px}.card{padding:10px;border-radius:16px}.brand{font-size:24px}.tag{display:none}.pill{font-size:11px;padding:7px}.card h2{font-size:17px}.settings{grid-template-columns:1fr 1fr}.small h2{font-size:14px}.prompt-card textarea{padding:9px}.footer{gap:7px}.status{padding:7px;font-size:11px}.send{padding:11px;font-size:16px}}@media(max-width:620px){.shell{height:100dvh;min-height:0;grid-template-rows:auto minmax(0,1fr) auto}.layout{grid-template-columns:1fr;grid-template-rows:minmax(0,.9fr) minmax(0,1.1fr)}.left{grid-template-columns:1fr 1fr;grid-template-rows:1fr}.prompt-card textarea{min-height:35px}.small{overflow:auto}.code-head h2{font-size:15px}.tools button{font-size:11px;padding:5px}.editor pre,.editor textarea{font-size:11px;padding:8px}.footer{flex-wrap:wrap}.send{font-size:14px}.status{font-size:10px}.brand{font-size:20px}}@media(max-height:620px){.shell{gap:6px;padding:7px}.card{padding:9px}.card h2{margin-bottom:4px}.generate{padding:7px}.settings input,.settings select,.settings textarea{padding:4px}.footer .note{display:none}}
+/* Compact controls, even with six long model names */
+.settings select#model{font-size:11px;min-width:0;max-width:100%;padding:5px 3px}
+.settings label{min-width:0}
+.usage{font-size:11px;padding:6px 8px}
+@media(max-width:980px){.settings select#model{font-size:10px}.usage{font-size:10px}}
+@media(max-width:620px){.settings select#model{font-size:10px}.usage{white-space:normal;line-height:1.2}}
+
+/* v8: fixed off-canvas drawer enters from the LEFT edge of the viewport. */
+.montage-card{position:relative}
+.config-overlay{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:visible}
+.config-overlay[hidden]{display:none!important}
+.config-drawer{position:absolute;top:0;bottom:0;left:0;width:min(390px,92vw);background:rgba(251,252,255,.99);border-radius:0 22px 22px 0;border:2px solid #b9d8ff;box-shadow:7px 0 25px #17296335;transform:translateX(-105%);transition:transform .34s cubic-bezier(.22,.75,.24,1);pointer-events:auto;display:flex;flex-direction:column;padding:18px 15px;gap:10px}
+.config-overlay.open .config-drawer{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.drawer-head h2{font-size:15px;margin:0;flex:1}
+.drawer-close{border:1px solid #abb8e3;border-radius:9px;background:#e9edff;color:#1b316c;padding:3px 9px;font-size:18px;font-weight:700;line-height:1.2}
+.drawer-scroll{overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;overscroll-behavior:contain}
+.config-drawer .settings{gap:5px}
+.config-drawer .settings label{font-size:10px}
+.config-drawer .settings input,.config-drawer .settings select,.config-drawer .settings textarea{font-size:11px;padding:5px}
+.config-drawer .settings select#model{font-size:10px}
+.config-drawer .note{font-size:10px;line-height:1.25;margin-top:7px}
+@media(max-width:620px){.config-drawer{padding:6px 8px}.drawer-head h2{font-size:12px}.config-drawer .settings{grid-template-columns:1fr}.config-drawer .settings label{font-size:10px}.config-drawer .settings select#model{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.config-drawer{transition:none}}
+</style></head><body><main class="shell"><header class="header"><div><div class="brand">✨ Kamille <b>Code LED v9</b></div><div class="tag">Crée ton programme CircuitPython avec OpenRouter !</div></div><div class="header-actions"><button class="config-btn" id="configToggle" type="button" aria-controls="configPanel" aria-expanded="false">⚙️ Config</button><div class="pill">🧪 ESP32-C3 · GPIO7 · test IA · v9</div></div></header><section class="layout"><div class="left"><section class="card prompt-card"><h2>💬 Dis à l'IA ce que tu veux créer</h2><textarea id="prompt" aria-label="Idée de programme">Dessine un cœur rouge qui bat trois fois, puis s’éteint.</textarea><button class="generate" id="generate">✨ Générer le code</button></section><section class="card montage-card" id="montageCard"><img src="assets/esp.png" alt="Montage (rappel) : matrice LED 16 x 16, ESP32-C3 SuperMini, bouton A, bouton B, potentiomètre P"><div class="config-overlay" id="configPanel" hidden><section class="config-drawer" aria-label="Configuration OpenRouter" role="dialog" aria-modal="false"><div class="drawer-head"><h2>🔑 Configuration OpenRouter</h2><button class="drawer-close" id="configClose" type="button" aria-label="Refermer la configuration" title="Refermer les réglages">❮</button></div><div class="drawer-scroll"><div class="settings"><label class="wide">Clé OpenRouter (non enregistrée)<input type="password" id="key" autocomplete="off" placeholder="sk-…"></label><label>Modèle<select id="model" aria-label="Choisir le modèle IA"><option value="mistralai/mistral-small-3.2-24b-instruct">💵 Mistral Small 3.2 · ≈0,033¢</option><option value="mistralai/codestral-2508">💵💵 Codestral 2508 · ≈0,146¢</option><option value="qwen/qwen3-coder-flash">💵💵💵 Qwen3 Coder Flash · ≈0,148¢</option><option value="openai/gpt-4.1-mini" selected>💵💵💵💵 GPT-4.1 mini ⭐ · ≈0,248¢</option><option value="anthropic/claude-haiku-4.5">💵💵💵💵💵 Claude Haiku 4.5 · ≈0,760¢</option><option value="anthropic/claude-sonnet-4.5">💵💵💵💵💵💵 Claude Sonnet 4.5 · ≈2,280¢</option></select></label><label>GPIO LED<input id="gpio" type="number" value="7" min="7" max="7" readonly></label><label>Orientation<input value="Zigzag + miroir horizontal" readonly></label><label>Luminosité<input value="0,05 (fixée)" readonly></label></div><p class="note">Clé non enregistrée. Ne la mettez jamais dans le HTML public. Le code généré doit être vérifié avant exécution.</p></div></section></div></section></div><section class="card code-card"><div class="code-head"><h2>🐍 Ton code Python <span class="chip">modifiable</span></h2><div class="tools"><button id="copy" title="Copier">📋 Copier</button><button id="download" title="Télécharger">⬇️ .py</button></div></div><div class="editor"><pre id="highlight" aria-hidden="true"></pre><textarea id="code" spellcheck="false" aria-label="Éditeur de code Python"></textarea></div></section></section><footer class="footer"><div class="status" id="status" role="status">💡 Ouvrez ⚙️ Config pour saisir votre clé, puis générez un programme pour ESP32-C3.</div><div class="usage" id="usage" aria-live="polite">💰 Tokens : 0 (↑ 0 · ↓ 0) · Coût : 0,0000¢</div><button class="send" disabled title="Mode test : aucune connexion ESP32">➜ Envoyer sur l'ESP32 · bientôt</button></footer></main><script>
+const $=id=>document.getElementById(id);let generating=false;
+let drawerClosing=false;
+function setConfig(open){
+  const panel=$('configPanel');
+  if(open){drawerClosing=false;panel.hidden=false;requestAnimationFrame(()=>panel.classList.add('open'));}
+  else {drawerClosing=true;panel.classList.remove('open');setTimeout(()=>{if(drawerClosing&&!panel.classList.contains('open'))panel.hidden=true;},370);}
+  $('configToggle').setAttribute('aria-expanded',String(open));
+}
+$('configToggle').addEventListener('click',()=>setConfig(!$('configPanel').classList.contains('open')));
+$('configClose').addEventListener('click',()=>setConfig(false));
+$('configPanel').addEventListener('keydown',e=>{if(e.key==='Escape'){setConfig(false);$('configToggle').focus();}});
+// Total for this browser tab only. Never store API keys or billing data.
+let totalInput=0,totalOutput=0,totalCost=0,estimatedCount=0;
+// Fallback list prices in USD per million tokens. OpenRouter's actual cost takes priority.
+const PRICES={
+  "mistralai/mistral-small-3.2-24b-instruct":{input:0.075,output:0.20},
+  "mistralai/codestral-2508":{input:0.20,output:0.96},
+  "qwen/qwen3-coder-flash":{input:0.195,output:0.975},
+  "openai/gpt-4.1-mini":{input:0.40,output:1.60},
+  "anthropic/claude-haiku-4.5":{input:1.00,output:5.00},
+  "anthropic/claude-sonnet-4.5":{input:3.00,output:15.00}
+};
+function updateUsage(usage,model){
+  if(!usage)return;
+  const input=Number(usage.prompt_tokens??usage.input_tokens??0);
+  const output=Number(usage.completion_tokens??usage.output_tokens??0);
+  totalInput+=input;totalOutput+=output;
+  const reported=Number(usage.cost);
+  if(usage.cost!==undefined && usage.cost!==null && Number.isFinite(reported)){
+    totalCost+=reported;
+  }else{
+    const rates=PRICES[model];
+    if(rates){totalCost+=(input*rates.input+output*rates.output)/1e6;estimatedCount++}
+    else estimatedCount++;
+  }
+  const cents=(totalCost*100).toLocaleString('fr-FR',{minimumFractionDigits:4,maximumFractionDigits:4});
+  $('usage').textContent=`💰 Tokens : ${(totalInput+totalOutput).toLocaleString('fr-FR')} (↑ ${totalInput.toLocaleString('fr-FR')} · ↓ ${totalOutput.toLocaleString('fr-FR')}) · Coût${estimatedCount?' ≈':''} : ${cents}¢`;
+}
+const example=`import board
+import neopixel
+import time
+
+# ESP32-C3 SuperMini · 16x16 · GPIO7
+# Exemple : écran rouge pendant 15 secondes
+pixels = neopixel.NeoPixel(board.IO7, 256, brightness=0.05, auto_write=False)
+
+def xy_to_index(x, y):
+    x_corrige = 15 - x
+    return y * 16 + (x_corrige if y % 2 == 0 else 15 - x_corrige)
+
+DUREE = 15
+try:
+    pixels.fill((60, 0, 0))
+    pixels.show()
+    debut = time.monotonic()
+    precedent = -1
+    while time.monotonic() - debut < DUREE:
+        restant = max(0, int(DUREE - (time.monotonic() - debut)))
+        if restant != precedent:
+            print(f"Extinction dans {restant}s   ", end="\r")
+            precedent = restant
+        time.sleep(0.1)
+finally:
+    pixels.fill((0, 0, 0))
+    pixels.show()
+    print("\nLED éteintes.")
+`;
+$('code').value=example;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function highlight(src){let out='',i=0;const kw=/^(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/;while(i<src.length){let rem=src.slice(i),m;if(rem[0]==='#'){m=rem.match(/^[^\n]*/)[0];out+='<span class="comment">'+esc(m)+'</span>';i+=m.length;continue}if(rem[0]==='"'||rem[0]==="'"){let quote=rem[0],triple=rem.startsWith(quote.repeat(3)),j=triple?3:1;while(j<rem.length){if(rem[j]==='\\'){j+=2;continue}if(triple&&rem.slice(j,j+3)===quote.repeat(3)){j+=3;break}if(!triple&&rem[j]===quote){j++;break}if(!triple&&rem[j]==='\n')break;j++}out+='<span class="str">'+esc(rem.slice(0,j))+'</span>';i+=j;continue}if((m=rem.match(kw))){out+='<span class="kw">'+m[0]+'</span>';i+=m[0].length;continue}if((m=rem.match(/^\b\d+(?:\.\d+)?\b/))){out+='<span class="num">'+m[0]+'</span>';i+=m[0].length;continue}if((m=rem.match(/^[a-zA-Z_]\w*(?=\s*\()/))){out+='<span class="fn">'+m[0]+'</span>';i+=m[0].length;continue}out+=esc(src[i]);i++}return out+'\n'}
+function update(){ $('highlight').innerHTML=highlight($('code').value)}update();$('code').addEventListener('input',update);$('code').addEventListener('scroll',()=>{$('highlight').scrollTop=$('code').scrollTop;$('highlight').scrollLeft=$('code').scrollLeft});$('code').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();let t=e.target,a=t.selectionStart,b=t.selectionEnd;t.setRangeText('    ',a,b,'end');update()}});
+function status(s,type=''){let el=$('status');el.className='status '+type;el.textContent=s}
+function clean(s){s=s.trim();let m=s.match(/^```(?:python)?\s*\n([\s\S]*?)\n```\s*$/i);return m?m[1].trim():s}
+const SYSTEM_PROMPT = `Tu es Kamille Code, un assistant pédagogique francophone qui génère des programmes CircuitPython pour une enfant. Retourne UNIQUEMENT du code Python exécutable, sans Markdown ni texte extérieur. Commence par 2 ou 3 commentaires français qui expliquent la stratégie. Ne parle jamais de Thonny. Ne produis jamais d'images.
+
+MATÉRIEL FIXE ET OBLIGATOIRE : ESP32-C3 SuperMini sous CircuitPython, matrice WS2812B 16x16 (256 pixels) branchée sur board.IO7. Utiliser neopixel.NeoPixel(board.IO7, 256, brightness=0.05, auto_write=False). Ne jamais définir brightness supérieur à 0.05, même si l'utilisateur le demande. Ne jamais modifier les pins ou le firmware.
+
+COMMANDES FACULTATIVES DISPONIBLES : bouton A sur board.IO1, bouton B sur board.IO2, potentiomètre P sur board.IO3. Ne les utiliser QUE si la demande les mentionne ou si leur utilisation apporte une interaction réellement pertinente; ne pas ajouter de commandes inutiles ni imposer les trois. Pour A et B, utiliser digitalio.DigitalInOut, Direction.INPUT, Pull.UP, état appuyé = False (actif LOW). Pour P, utiliser analogio.AnalogIn(board.IO3) et sa propriété value (0 à 65535), uniquement si analogio et cette broche sont effectivement compatibles avec la version de CircuitPython installée; sinon ne pas inventer une lecture analogique fonctionnelle. Expliquer brièvement le rôle de chaque commande utilisée dans les commentaires du code. Lire les entrées sans bloquer le minuteur; libérer chaque objet digitalio/analogio créé via deinit() dans finally. Pour une demande simple sans besoin d'interaction, ne créer aucune entrée. Ne jamais changer les connexions matérielles.
+
+MAPPING OBLIGATOIRE : serpentin horizontal avec miroir horizontal, origine physique en haut à droite. Toutes les coordonnées visuelles x,y sont 0..15. Définir :
+def xy_to_index(x, y):
+    x_corrige = 15 - x
+    if y % 2 == 0:
+        return y * 16 + x_corrige
+    return y * 16 + (15 - x_corrige)
+Dessiner via cette fonction, vérifier les bornes, appeler pixels.show() après les modifications.
+
+DURÉE ET EXTINCTION : Tous les programmes doivent durer entre 10 et 60 secondes, durée adaptée à la demande (fixe 15 s, animation 20 s, défilement 30 s). Mesurer la durée globale avec time.monotonic(), jamais de boucle infinie sans échéance. Mettre à jour environ une fois par seconde un compte à rebours dans la console : print(f"Extinction dans {restant}s   ", end="\r"). Ne jamais bloquer le programme longtemps avec un seul time.sleep : utiliser de petites pauses et vérifier régulièrement le temps. Placer l'animation dans un bloc try/finally; dans finally faire pixels.fill((0,0,0)), pixels.show(), puis un message de fin. Le bouton ne doit pas empêcher l'expiration du timer.
+
+AFFICHAGE : Si l'enfant demande un cœur, une maison, un animal ou un symbole, produire le dessin sur la matrice 16x16, pas une image externe. Pour le texte défilant, utiliser adafruit_framebuf si disponible sur le dispositif, avec une gestion cohérente des dimensions et du mapping; ne pas présumer qu'il est installé. Préférer des programmes simples, complets, pédagogiques, sans accès réseau ni fichiers. N'utiliser que des modules CircuitPython adaptés.
+
+GESTION AUTOMATIQUE DE LA COMPLEXITÉ : Avant de coder, évalue silencieusement si la demande est simple, intermédiaire ou complexe. Ne révèle pas cette classification.
+- SIMPLE : produire le code le plus direct et lisible possible, généralement 30 à 150 lignes si nécessaire. Ne pas ajouter de fonctions, classes, contrôles ou comportements inutiles.
+- INTERMÉDIAIRE : utiliser des fonctions réutilisables et une structure claire, généralement 150 à 350 lignes seulement si justifié.
+- COMPLEXE : permettre une organisation plus élaborée, sans dépasser 700 lignes ni 35 Ko de code source. Optimiser la mémoire, éviter les allocations répétées et les calculs lourds dans les boucles.
+- Ces fourchettes sont indicatives, sauf les plafonds absolus de 700 lignes et 35 Ko. La longueur doit être proportionnelle à la demande. Ne jamais remplir artificiellement le budget, ni retourner du code incomplet ou tronqué.
+
+SIMPLIFICATION INTELLIGENTE : simplifier l'implémentation, jamais au détriment de l'expérience essentielle. Avant de coder, identifier silencieusement les fonctionnalités et interactions indispensables pour que le programme soit réellement utilisable, cohérent et reconnaissable. Les préserver en priorité.
+- Simplifier d'abord les effets décoratifs, les détails graphiques, la quantité de contenu et les animations secondaires ; adapter la représentation à 16x16 et aux ressources du microcontrôleur.
+- Ne pas supprimer une action, une commande ou une règle essentielle uniquement pour raccourcir le code. Ne jamais livrer une démonstration visuelle trompeuse qui semble fonctionner mais manque d'une fonctionnalité indispensable.
+- Employer les boutons A et B et le potentiomètre P lorsque leur utilisation est nécessaire aux interactions essentielles, même si la demande ne les cite pas explicitement. Ne pas ajouter de commandes sans utilité réelle.
+- Si les actions nécessaires sont plus nombreuses que les trois commandes physiques, prévoir une affectation intuitive et documentée : appuis courts/longs, combinaisons de boutons ou potentiomètre, avec anti-rebond et lecture non bloquante. Conserver toutes les actions essentielles et respecter le minuteur.
+- Si la version complète dépasse les limites, chercher d'abord des algorithmes et structures plus efficaces. Si elle reste impossible, proposer une adaptation cohérente préservant autant que possible le comportement central, sans prétendre implémenter les fonctionnalités absentes.
+- Un programme doit être fonctionnel et interactif lorsque la demande l'exige, pas simplement visuellement ressemblant.
+- Respecter toujours le matériel fixe, les ressources disponibles, les 10 à 60 secondes, la luminosité et le bloc try/finally.
+
+Si l'utilisateur demande du contenu sexuel explicite, insultant ou manifestement inadapté aux enfants, refuser en répondant exactement « Bien essayé, mais aujourd'hui c'est non ! » (pas de code dans ce cas).`;
+// Fast local estimate: maximum output budget, not a required code length.
+function complexityBudget(prompt){
+  const p=prompt.toLocaleLowerCase('fr');
+  const complex=/tetris|puzzle|plateforme|labyrinthe|jeu|game|complexe|sophistiqu|plusieurs (?:étapes|modes|écrans|animations)|menu|séquence.*(?:puis|ensuite)|interactif|interactions|boutons?.*(?:potentiomètre|capteur)|potentiomètre.*bouton|physique|simulation|algorithme|générat(?:eur|if)|programmable|multi[- ]/i;
+  const medium=/animation|défile|texte|clignot|change|bouton|potentiomètre|déplace|tourne|rebond|aléatoire|progressiv|plusieurs|enchaîn|couleurs|vitesse|effet|transition/i;
+  const clauses=(p.match(/\b(?:puis|ensuite|et aussi|après|lorsque|quand|pendant que)\b/g)||[]).length;
+  if(complex.test(p)||clauses>=3||p.length>550)return {level:'complexe',tokens:8000};
+  if(medium.test(p)||clauses>=1||p.length>160)return {level:'intermédiaire',tokens:4000};
+  return {level:'simple',tokens:2000};
+}
+$('generate').addEventListener('click',async()=>{
+  if(generating)return;
+  const key=$('key').value.trim(), prompt=$('prompt').value.trim(), model=$('model').value;
+  if(!key){status('🔑 Ouvrez Config et entrez votre clé OpenRouter.','error');return}
+  if(!prompt){status('✏️ Décrivez votre idée.','error');return}
+  generating=true;$('generate').disabled=true;status('✨ L’IA prépare le programme pour ESP32-C3…');
+  const budget=complexityBudget(prompt);
+  const system=SYSTEM_PROMPT;
+  try{
+    const res=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'X-Title':'Kamille Code LED'},
+      body:JSON.stringify({model,messages:[{role:'system',content:system},{role:'user',content:prompt}],temperature:0.2,max_completion_tokens:budget.tokens,usage:{include:true}})
+    });
+    const data=await res.json();
+    if(!res.ok)throw Error(data.error?.message||'Erreur HTTP '+res.status);
+    const content=data.choices?.[0]?.message?.content;
+    if(!content)throw Error('Réponse vide du modèle');
+    if(data.choices?.[0]?.finish_reason==='length')throw Error('Code incomplet : limite de tokens atteinte. Simplifiez la demande.');
+    updateUsage(data.usage,model);
+    if(content.trim().includes('Bien essayé, mais aujourd\'hui c\'est non !') && !content.includes('import ')){
+      status('🛑 Bien essayé, mais aujourd’hui c’est non !','error');return;
+    }
+    const generated=clean(content);
+    const lineCount=generated.split('\n').length;
+    const byteCount=new TextEncoder().encode(generated).length;
+    if(lineCount>700||byteCount>35*1024)throw Error('Code trop long ('+lineCount+' lignes, '+byteCount+' octets). Simplifiez la demande.');
+    $('code').value=generated;update();
+    const warnings=[];
+    if(!/board\.IO7/.test(content))warnings.push('GPIO7 absent');
+    if(!/finally\s*:/.test(content))warnings.push('bloc finally absent');
+    if(!/monotonic\s*\(/.test(content))warnings.push('timer absent');
+    if(/brightness\s*=\s*(?:0\.[1-9]|[1-9])/.test(content))warnings.push('luminosité à vérifier');
+    status(warnings.length?'⚠️ Code généré, à vérifier : '+warnings.join(', ')+'.':'✅ Code généré ('+budget.level+', '+lineCount+' lignes) · GPIO7. Vous pouvez le modifier et le télécharger.',warnings.length?'error':'success');
+  }catch(e){status('❌ '+(e instanceof TypeError?'Connexion impossible : vérifiez HTTPS, le réseau et CORS.':e.message),'error')}
+  finally{generating=false;$('generate').disabled=false}
+});
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('code').value);status('📋 Code copié.','success')}catch{status('Copie indisponible : sélectionnez le texte dans l’éditeur.','error')}};$('download').onclick=()=>{const blob=new Blob([$('code').value],{type:'text/x-python;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='code.py';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);status('⬇️ Fichier code.py téléchargé.','success')};
+</script></body></html>
