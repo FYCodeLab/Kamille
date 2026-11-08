@@ -6,6 +6,7 @@ Live site: https://fycodelab.github.io/Kamille/ (currently v3 — index.html is 
 Kamille Code LED — crée un programme CircuitPython pour une matrice NeoPixel 16x16 avec OpenRouter. La clé OpenRouter est entrée dans la page, jamais enregistrée ni publiée.
 
 Versions (kept, never replaced):
+- v13: https://fycodelab.github.io/Kamille/kamillev13.html — system prompt: button ergonomics — A+B combo (not long press) for a third action, A+B absolute priority, 50–80 ms detection window, debounce, symmetric repeat
 - v12: https://fycodelab.github.io/Kamille/kamillev12.html — system prompt: "Priorité absolue — fonctionnalités essentielles et jouabilité" (Tetris test: rotation is essential) + validated reference programs (scrolling text, adafruit_framebuf)
 - v10: https://fycodelab.github.io/Kamille/kamillev10.html — prompt example is now a grey placeholder (not submitted); system prompt: A = left, B = right by default for horizontal movement
 - v9: https://fycodelab.github.io/Kamille/kamillev9.html — reworked system prompt: "Simplification intelligente" (preserve essential actions, use A/B/P when needed, map extra actions to presses/combos), game keywords in complexity detection, extra-rules input removed
