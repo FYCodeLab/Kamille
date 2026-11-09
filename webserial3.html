@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESP32-C3 · Web Serial v3</title>
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden}body{font:clamp(13px,1.65vh,16px) system-ui,sans-serif;background:#f4f6fa;color:#172238}main{height:100dvh;max-width:780px;margin:auto;padding:clamp(10px,2vh,22px);display:flex;flex-direction:column;gap:clamp(7px,1.2vh,13px)}h1{font-size:clamp(19px,3vh,28px);margin:0}.sub{color:#526071;margin:0}.panel{background:white;border:1px solid #dce2ea;border-radius:12px;padding:clamp(10px,1.7vh,18px)}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button{font:inherit;font-weight:650;border:0;border-radius:9px;padding:10px 15px;background:#2563eb;color:white;cursor:pointer}button.secondary{background:#e7edf7;color:#172238}button.on{background:#138a52}button.off{background:#b43b3b}button:disabled{opacity:.42;cursor:not-allowed}.status{font-weight:700}.dot{display:inline-block;width:10px;height:10px;background:#9aa4b2;border-radius:50%;margin-right:6px}.dot.connected{background:#12a05c}.dot.lost{background:#d23b3b}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.hint{color:#536072;font-size:.92em;margin:6px 0 0}.console{display:flex;flex-direction:column;min-height:0;flex:1}.console .row{margin-bottom:7px}pre{margin:0;background:#101a2c;color:#b7f5d0;padding:12px;border-radius:9px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;min-height:0;flex:1;font:clamp(11px,1.5vh,14px)/1.4 ui-monospace,monospace}label{display:inline-flex;align-items:center;gap:6px}select{font:inherit;padding:5px;border:1px solid #c8d1dd;border-radius:6px}.warning{color:#805b1a;background:#fff5dc;border-radius:8px;padding:8px 10px;margin:0}@media(max-height:560px){.hint{display:none}.panel{padding:8px}main{gap:6px}button{padding:7px 10px}}
+</style></head><body><main>
+<header><h1>ESP32-C3 · Web Serial test <small>v3</small></h1><p class="sub">CircuitPython · onboard LED only</p></header>
+<p class="warning">Close Thonny before connecting. Chrome or Edge recommended.</p>
+<section class="panel"><div class="row"><span class="status"><span class="dot" id="dot"></span><span id="status">Not connected</span></span><div class="controls"><button id="connect">Connect ESP32-C3</button><button class="secondary" id="disconnect" disabled>Disconnect</button></div></div></section>
+<section class="panel"><div class="row"><strong>Onboard LED</strong><label>Pin <select id="pin"><option value="IO8">GPIO8 (typical C3 SuperMini)</option><option value="IO2">GPIO2</option><option value="IO10">GPIO10</option></select></label></div><div class="controls" style="margin-top:10px"><button class="on" id="on" disabled>LED ON</button><button class="off" id="off" disabled>LED OFF</button></div><p class="hint">Assumes a single onboard LED, active LOW on GPIO8. Some ESP32-C3 boards have a different LED or no controllable onboard LED.</p></section>
+<section class="panel console"><div class="row"><strong>Serial console</strong><button class="secondary" id="clear">Clear</button></div><pre id="log" aria-live="polite">Ready. Connect the ESP32-C3 to begin.\n</pre></section>
+</main><script>
+'use strict';
+const $=id=>document.getElementById(id);let port=null,reader=null,writer=null,session=0,closing=false;
+const enc=new TextEncoder(),dec=new TextDecoder();const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function log(s){const el=$('log');el.textContent+=s;el.scrollTop=el.scrollHeight;if(el.textContent.length>18000)el.textContent=el.textContent.slice(-12000)}
+function status(s,mode='idle'){$('status').textContent=s;$('dot').className='dot'+(mode==='connected'?' connected':mode==='lost'?' lost':'')}
+function ui(connected){$('connect').disabled=connected;$('disconnect').disabled=!connected;$('on').disabled=!connected;$('off').disabled=!connected;$('pin').disabled=connected}
+async function readLoop(activePort,id,activeReader){
+ try{
+  while(id===session){
+   const {value,done}=await activeReader.read();
+   if(done)break;
+   if(value)log(dec.decode(value,{stream:true}));
+  }
+ }catch(e){if(id===session&&!closing)log('\n[Serial read error] '+e.message+'\n')}
+ finally{
+  if(id===session&&!closing){
+   log('\n[Serial connection lost / device disconnected]\n');
+   await disconnect(true);
+  }
+ }
+}
+async function send(s){if(!writer||!port||closing)throw Error('Not connected');await writer.write(typeof s==='string'?enc.encode(s):s)}
+async function connect(){
+ if(!navigator.serial){status('Web Serial unavailable');log('\nUse desktop Chrome/Edge over HTTPS or localhost.\n');return}
+ try{
+  const selected=await navigator.serial.requestPort();
+  port=selected;
+  await port.open({baudRate:115200});
+  writer=port.writable.getWriter();reader=port.readable.getReader();
+  closing=false;const id=++session;
+  ui(true);status('Connected — USB serial','connected');
+  log('\n[USB serial connected — entering CircuitPython REPL]\n');
+  void readLoop(port,id,reader);
+  await send(new Uint8Array([3,3]));await sleep(250);await send('\r');
+ }catch(e){
+  if(e.name==='NotFoundError'&&!port)return;
+  log('\n[Connection error] '+e.message+'\n');
+  await disconnect(false);
+ }
+}
+async function runLed(on){
+ if(!writer)return;
+ const pin=$('pin').value,level=on?'False':'True';
+ const code=`import board, digitalio\ntry:\n led.deinit()\nexcept (NameError, AttributeError):\n pass\nled = digitalio.DigitalInOut(board.${pin})\nled.direction = digitalio.Direction.OUTPUT\nled.value = ${level}\nprint('Onboard LED ${on?'ON':'OFF'} (${pin}, active LOW)')`;
+ try{await send(new Uint8Array([3]));await sleep(130);await send('exec('+JSON.stringify(code)+')\r')}
+ catch(e){log('\n[Send error] '+e.message+'\n');await disconnect(true)}
+}
+async function disconnect(lost=false){
+ if(closing)return;
+ closing=true;++session;ui(false);
+ const oldReader=reader,oldWriter=writer,oldPort=port;
+ reader=null;writer=null;port=null;
+ status(lost?'Disconnected — USB connection lost':'Not connected',lost?'lost':'idle');
+ try{if(oldReader){await oldReader.cancel();oldReader.releaseLock()}}catch(e){}
+ try{if(oldWriter){oldWriter.releaseLock()}}catch(e){}
+ try{if(oldPort)await oldPort.close()}catch(e){}
+ closing=false;
+}
+// Fires when a previously available USB serial device is physically removed.
+if(navigator.serial){
+ navigator.serial.addEventListener('disconnect',event=>{
+  if(port&&(event.target===port||event.port===port)){
+   log('\n[USB unplugged — device disconnected]\n');
+   void disconnect(true);
+  }
+ });
+}
+$('connect').onclick=connect;$('disconnect').onclick=()=>disconnect(false);$('on').onclick=()=>runLed(true);$('off').onclick=()=>runLed(false);$('clear').onclick=()=>{$('log').textContent=''};
+if(!navigator.serial){$('connect').disabled=true;status('Web Serial unsupported')}
+</script></body></html>
