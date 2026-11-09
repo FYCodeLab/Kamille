@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESP32-C3 CircuitPython Web Serial Test</title><style>body{font:16px system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 18px;color:#17202a}button{padding:12px 17px;margin:5px 6px 5px 0;font-size:16px;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}#status{font-weight:650}pre{background:#111827;color:#b6f3d2;padding:16px;min-height:170px;max-height:320px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:8px}.note{color:#555} .warn{background:#fff3d4;padding:10px;border-radius:6px}</style></head><body>
+<h1>ESP32-C3 · Web Serial test</h1>
+<p class="warn"><strong>Close Thonny's serial connection first.</strong> Only one application can normally use the port at a time. This test interrupts the currently running CircuitPython program.</p>
+<p>Status: <span id="status">Not connected</span></p>
+<button id="connect">Connect ESP32-C3</button><button id="disconnect" disabled>Disconnect</button>
+<hr><p>Test the <strong>WS2812B matrix on GPIO7</strong> (all 256 LEDs, brightness 0.05):</p>
+<button id="on" disabled>LEDs ON (dim green)</button><button id="off" disabled>LEDs OFF</button>
+<p class="note">Uses CircuitPython <code>neopixel</code> and <code>board.IO7</code>. No additional firmware required if the USB serial console is enabled. This does not test the ESP32-C3's onboard LED.</p>
+<h3>Serial console</h3><pre id="log" aria-live="polite"></pre>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let port=null,reader=null,writer=null,reading=false;
+const encoder=new TextEncoder(),decoder=new TextDecoder();
+function log(s){$('log').textContent+=s;$('log').scrollTop=$('log').scrollHeight;}
+function status(s){$('status').textContent=s;}
+function ui(connected){$('connect').disabled=connected;$('disconnect').disabled=!connected;$('on').disabled=!connected;$('off').disabled=!connected;}
+async function readLoop(){reading=true;try{while(port&&reader){const {value,done}=await reader.read();if(done)break;if(value)log(decoder.decode(value,{stream:true}));}}catch(e){log('\n[Read error] '+e.message+'\n');}finally{reading=false;}}
+async function send(data){if(!writer)throw Error('Not connected');await writer.write(typeof data==='string'?encoder.encode(data):data);}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function connect(){if(!('serial' in navigator)){status('Web Serial unavailable');log('Use desktop Chrome or Edge over HTTPS or localhost.\n');return;}
+ try{port=await navigator.serial.requestPort();await port.open({baudRate:115200});writer=port.writable.getWriter();reader=port.readable.getReader();void readLoop();ui(true);status('USB serial connected');log('\n[Connected; interrupting current code to access REPL]\n');await send(new Uint8Array([3,3]));await sleep(300);await send('\r');}catch(e){log('\n[Connection error] '+e.message+'\n');status('Connection failed');await disconnect();}}
+async function runPython(code){try{if(!port)return; // Interrupt a running code.py and enter the REPL.
+ await send(new Uint8Array([3]));await sleep(120);
+ // A single exec(...) statement avoids dependence on paste mode.
+ await send('exec('+JSON.stringify(code)+')\r');
+ }catch(e){log('\n[Send error] '+e.message+'\n');}}
+async function disconnect(){ui(false);try{if(reader){await reader.cancel();reader.releaseLock();reader=null;}}catch(e){log('[Reader cleanup] '+e.message+'\n');}try{if(writer){writer.releaseLock();writer=null;}}catch(e){}try{if(port){await port.close();}}catch(e){log('[Close error] '+e.message+'\n');}port=null;status('Not connected');}
+$('connect').onclick=connect;$('disconnect').onclick=disconnect;
+$('on').onclick=()=>runPython('import board\nimport neopixel\np=neopixel.NeoPixel(board.IO7,256,brightness=0.05,auto_write=False)\np.fill((0,255,0))\np.show()\nprint("LEDs ON")');
+$('off').onclick=()=>runPython('import board\nimport neopixel\np=neopixel.NeoPixel(board.IO7,256,brightness=0.05,auto_write=False)\np.fill((0,0,0))\np.show()\nprint("LEDs OFF")');
+if(!('serial' in navigator)){status('Web Serial not supported in this browser');$('connect').disabled=true;}
+window.addEventListener('beforeunload',()=>{if(port){try{reader?.cancel();}catch(e){}}});
+</script></body></html>
