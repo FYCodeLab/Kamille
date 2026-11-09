@@ -1,0 +1,151 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Comparer les LLM — OpenRouter</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+:root{--paper:#f6f4ee;--ink:#1c1e22;--muted:#6b6f76;--line:#e2ddd0;--card:#fffdf8;--accent:#1d4d3b;--accent-soft:#e4efe8;--gold:#8a6d2b;--danger:#9b2c2c}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.45}
+.shell{height:100dvh;min-height:560px;max-width:1440px;margin:auto;padding:18px 22px 14px;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:12px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-family:Fraunces,Georgia,serif;font-size:30px;font-weight:600;margin:0;letter-spacing:-.5px}
+h1 em{font-style:normal;color:var(--accent)}
+.subtitle{color:var(--muted);font-size:13px;margin:2px 0 0}
+.key{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.key input{width:230px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;font:inherit;font-size:13px;color:var(--ink)}
+.key input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.prompt-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:stretch}
+.prompt-row textarea{width:100%;min-height:58px;max-height:96px;resize:vertical;border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px 13px;font:inherit;font-size:14px;color:var(--ink)}
+.prompt-row textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.compare{border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-weight:600;font-size:15px;padding:0 26px;cursor:pointer;min-width:150px}
+.compare:hover{background:#173e30}.compare:disabled{opacity:.55;cursor:wait}
+.models{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.model{position:relative;text-align:left;border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:10px 11px 9px;cursor:pointer;font:inherit;color:var(--ink)}
+.model:hover{border-color:#b9b29e}
+.model[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent)}
+.model[aria-pressed="false"]{opacity:.62}
+.model .rank{position:absolute;top:8px;right:10px;font-size:11px;font-weight:700;color:var(--gold)}
+.model .tick{position:absolute;top:8px;left:10px;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;font-size:11px;color:#fff;background:var(--accent)}
+.model[aria-pressed="false"] .tick{background:transparent;color:transparent}
+.model .provider{font-size:11px;color:var(--muted);margin:18px 0 1px}
+.model .name{font-weight:700;font-size:14px;line-height:1.25}
+.model .price{font-size:12px;color:var(--muted);margin-top:5px}
+.model .price b{color:var(--ink);font-weight:600}
+.models-hint{font-size:12px;color:var(--muted);margin:-4px 0 0}
+.models-hint button{border:0;background:none;color:var(--accent);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:0}
+.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:10px;min-height:0}
+.result{border:1px solid var(--line);border-radius:12px;background:var(--card);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.result .head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:9px 12px 7px;border-bottom:1px solid var(--line)}
+.result .head .name{font-weight:700;font-size:13px}
+.result .head .rank{font-size:11px;color:var(--gold);font-weight:700;white-space:nowrap}
+.result .body{flex:1;min-height:0;overflow-y:auto;padding:10px 12px;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.result .body.empty{color:var(--muted);font-style:italic}
+.result .body.error{color:var(--danger)}
+.result .stats{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;padding:8px 12px;border-top:1px solid var(--line);font-size:12px;background:#fbf9f3}
+.result .stats b{font-weight:700}
+.result .stats .cost{margin-left:auto;font-weight:700;color:var(--accent)}
+.result .stats button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:2px 8px;font:inherit;font-size:11px;cursor:pointer;color:var(--ink)}
+.result .stats button:hover{border-color:var(--accent)}
+.result .loading{color:var(--muted)}
+footer{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;font-size:12.5px;color:var(--muted)}
+footer b{color:var(--ink)}
+footer .note{margin-left:auto;max-width:560px;text-align:right}
+@media(max-width:1100px){.models{grid-template-columns:repeat(3,1fr)}.results{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.shell{height:auto;min-height:100dvh}.prompt-row{grid-template-columns:1fr}.compare{padding:12px}.models{grid-template-columns:repeat(2,1fr)}.results{grid-template-columns:1fr;grid-template-rows:none}.result .body{max-height:260px}footer .note{text-align:left;margin-left:0}}
+</style></head><body><main class="shell">
+<header>
+<div><h1>Comparer les <em>LLM</em></h1><p class="subtitle">Une même question, six modèles — réponses, tokens et coût, côte à côte.</p></div>
+<label class="key">Clé OpenRouter <input type="password" id="key" autocomplete="off" placeholder="sk-or-…" aria-label="Clé OpenRouter"></label>
+</header>
+<div class="prompt-row">
+<textarea id="prompt" aria-label="Question à comparer" placeholder="Posez votre question ici… Par exemple : explique la photosynthèse en trois phrases.">Explique la photosynthèse en trois phrases simples.</textarea>
+<button class="compare" id="compare">Comparer</button>
+</div>
+<div class="models" id="models" role="group" aria-label="Modèles à comparer, du moins cher au plus cher"></div>
+<p class="models-hint">Du moins cher au plus cher — cliquez sur un modèle pour l'inclure ou l'exclure. <button id="selectAll" type="button">Tout sélectionner</button> · <button id="selectNone" type="button">Tout désélectionner</button></p>
+<section class="results" id="results" aria-live="polite"></section>
+<footer>
+<span id="totalModels">—</span><span id="totalTokens">—</span><span id="totalCost">—</span>
+<span class="note">La clé reste dans cet onglet et n'est jamais enregistrée. Tarifs OpenRouter par million de tokens (indicatifs) ; le coût réel remonté par l'API prime quand il est disponible.</span>
+</footer>
+</main><script>
+const MODELS=[
+{id:"mistralai/mistral-small-3.2-24b-instruct",name:"Mistral Small 3.2",provider:"Mistral AI",input:0.075,output:0.20},
+{id:"mistralai/codestral-2508",name:"Codestral 2508",provider:"Mistral AI",input:0.20,output:0.96},
+{id:"qwen/qwen3-coder-flash",name:"Qwen3 Coder Flash",provider:"Alibaba Qwen",input:0.195,output:0.975},
+{id:"openai/gpt-4.1-mini",name:"GPT-4.1 mini",provider:"OpenAI",input:0.40,output:1.60},
+{id:"anthropic/claude-haiku-4.5",name:"Claude Haiku 4.5",provider:"Anthropic",input:1.00,output:5.00},
+{id:"anthropic/claude-sonnet-4.5",name:"Claude Sonnet 4.5",provider:"Anthropic",input:3.00,output:15.00}
+];
+const $=id=>document.getElementById(id);
+const selected=new Set(MODELS.map(m=>m.id));
+const fmt$=n=>"$"+n.toFixed(5);
+const fmtInt=n=>n.toLocaleString("fr-FR");
+function renderModels(){
+  $("models").innerHTML=MODELS.map((m,i)=>{
+    const on=selected.has(m.id);
+    return `<button type="button" class="model" data-id="${m.id}" aria-pressed="${on}"><span class="tick">✓</span><span class="rank">#${i+1} · ${i===0?"le moins cher":i===MODELS.length-1?"le plus cher":""}</span><div class="provider">${m.provider}</div><div class="name">${m.name}</div><div class="price"><b>$${m.input.toFixed(3)}</b> entrée · <b>$${m.output.toFixed(2)}</b> sortie <span title="Par million de tokens">/ 1M tok.</span></div></button>`;
+  }).join("");
+  document.querySelectorAll(".model").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.id;
+    selected.has(id)?selected.delete(id):selected.add(id);
+    renderModels();
+  }));
+}
+renderModels();
+$("selectAll").onclick=()=>{MODELS.forEach(m=>selected.add(m.id));renderModels();};
+$("selectNone").onclick=()=>{selected.clear();renderModels();};
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function renderResults(){
+  $("results").innerHTML=MODELS.filter(m=>selected.has(m.id)).map((m,i)=>`
+  <article class="result" id="r-${i}">
+    <div class="head"><span class="name">${m.name}</span><span class="rank">#${MODELS.indexOf(m)+1} · ${m.provider}</span></div>
+    <div class="body empty" data-body>En attente de la comparaison…</div>
+    <div class="stats" data-stats><span>—</span></div>
+  </article>`).join("") || `<article class="result"><div class="body empty">Sélectionnez au moins un modèle pour comparer.</div></article>`;
+  $("totalModels").textContent="—";$("totalTokens").textContent="—";$("totalCost").textContent="—";
+}
+renderResults();
+let totals={tokens:0,cost:0,done:0};
+function updateTotals(){
+  $("totalModels").innerHTML=`<b>${totals.done}</b> modèle${totals.done>1?"s":""} comparé${totals.done>1?"s":""}`;
+  $("totalTokens").innerHTML=`<b>${fmtInt(totals.tokens)}</b> tokens au total`;
+  $("totalCost").innerHTML=`Coût total : <b>${fmt$(totals.cost)}</b>`;
+}
+async function runOne(m,card){
+  const body=card.querySelector("[data-body]"),stats=card.querySelector("[data-stats]");
+  const key=$("key").value.trim();
+  const t0=performance.now();
+  body.className="body loading";body.textContent="Interrogation en cours…";
+  stats.innerHTML="<span>—</span>";
+  try{
+    const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key,"X-Title":"LLM Compare"},body:JSON.stringify({model:m.id,messages:[{role:"system",content:"Tu es un assistant utile et précis. Réponds en français, de façon concise et structurée."},{role:"user",content:$("prompt").value.trim()}],temperature:0.3,max_completion_tokens:1200,usage:{include:true}})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error?.message||("Erreur HTTP "+res.status));
+    const content=data.choices?.[0]?.message?.content;
+    if(!content)throw new Error("Réponse vide du modèle");
+    const u=data.usage||{};
+    const inp=Number(u.prompt_tokens??u.input_tokens??0),out=Number(u.completion_tokens??u.output_tokens??0);
+    const reported=Number(u.cost);
+    const exact=u.cost!==undefined&&u.cost!==null&&Number.isFinite(reported);
+    const cost=exact?reported:(inp*m.input+out*m.output)/1e6;
+    const ms=Math.round(performance.now()-t0);
+    body.className="body";body.textContent=content;
+    stats.innerHTML=`<span>Entrée <b>${fmtInt(inp)}</b></span><span>Sortie <b>${fmtInt(out)}</b></span><span>Total <b>${fmtInt(inp+out)}</b> tok.</span><span>${(ms/1000).toFixed(1)} s</span><span class="cost">${fmt$(cost)}${exact?"":" (estimé)"}</span><button type="button" data-copy>Copier</button>`;
+    stats.querySelector("[data-copy]").onclick=async()=>{try{await navigator.clipboard.writeText(content)}catch{}};
+    totals.tokens+=inp+out;totals.cost+=cost;totals.done++;updateTotals();
+  }catch(e){
+    body.className="body error";body.textContent="❌ "+(e instanceof TypeError?"Connexion impossible : ouvrez la page via HTTPS (GitHub Pages) et vérifiez le réseau.":e.message);
+    stats.innerHTML="<span>Échec</span>";
+    totals.done++;updateTotals();
+  }
+}
+$("compare").addEventListener("click",async()=>{
+  const key=$("key").value.trim(),prompt=$("prompt").value.trim();
+  if(!key){alert("Entrez votre clé OpenRouter pour lancer la comparaison.");$("key").focus();return;}
+  if(!prompt){alert("Écrivez une question à comparer.");$("prompt").focus();return;}
+  if(selected.size===0){alert("Sélectionnez au moins un modèle.");return;}
+  const btn=$("compare");btn.disabled=true;btn.textContent="Comparaison…";
+  totals={tokens:0,cost:0,done:0};updateTotals();
+  renderResults();
+  const chosen=MODELS.filter(m=>selected.has(m.id));
+  await Promise.all(chosen.map((m,i)=>runOne(m,document.querySelectorAll(".result")[i])));
+  btn.disabled=false;btn.textContent="Comparer";
+});
+</script></body></html>
